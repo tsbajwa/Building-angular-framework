@@ -1,4 +1,5 @@
-{ "browser": true,
+{ 
+  "browser": true,
   "browserify": true,
   "devel": true,
   "globals": {
