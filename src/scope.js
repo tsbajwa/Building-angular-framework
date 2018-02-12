@@ -4,8 +4,7 @@ function Scope() {
 
 
 Scope.prototype.$watch = function (watchFn, listenerFn) {
-  
-  let watcher = {
+  const watcher = {
     watchFn: watchFn,
     listenerFn: listenerFn,
   };
