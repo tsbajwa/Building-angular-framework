@@ -5,15 +5,16 @@ function Scope() {
 
 Scope.prototype.$watch = function (watchFn, listenerFn) {
   const watcher = {
-    watchFn: watchFn,
-    listenerFn: listenerFn,
+    watchFn,
+    listenerFn,
   };
   
-  this.$$watchers.push(watcher);
+  this.$$watchers = [...this.$$watchers, watcher];
 };
 
 Scope.prototype.$digest = function() {
   this.$$watchers.forEach(watcher => {
+    watcher.watchFn(this);
     watcher.listenerFn();
   });
 };
