@@ -60,6 +60,17 @@ describe('Scope', () => {
       scope.$digest();
       expect(scope.counter).toBe(2);
     })
+
+    it('calls listener when watch value is first undefined', () => {
+      scope.counter = 0;
+      const watchFn = (scope) => scope.someValue;
+      const listenerFn = (newValue, oldValue, scope) => { scope.counter++ };
+
+      scope.$watch(watchFn, listenerFn);
+
+      scope.$digest();
+      expect(scope.counter).toBe(1);
+    })
   });
 });
 
