@@ -14,8 +14,13 @@ Scope.prototype.$watch = function (watchFn, listenerFn) {
 
 Scope.prototype.$digest = function() {
   this.$$watchers.forEach(watcher => {
-    watcher.watchFn(this);
-    watcher.listenerFn();
+    const newValue = watcher.watchFn(this);
+    const oldValue = watcher.last;
+
+    if (newValue !== oldValue) {
+      watcher.last = newValue;
+      watcher.listenerFn(newValue, oldValue, this);
+    }
   });
 };
 

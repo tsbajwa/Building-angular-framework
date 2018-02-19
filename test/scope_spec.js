@@ -31,9 +31,35 @@ describe('Scope', () => {
   
       scope.$watch(watchFn, listenerFn);
       scope.$digest();
-      
+
       expect(watchFn).toHaveBeenCalledWith(scope);
     });
+
+    it('calls the listener function when the watched value changes', () => {
+      scope.someValue = 'original value';
+      scope.counter = 0;
+
+      const watchFn = (scope) => scope.someValue;
+      const listenerFn = (newValue, oldValue, scope) => { scope.counter++ }
+
+      scope.$watch(watchFn, listenerFn);
+
+      expect(scope.counter).toBe(0);
+
+      scope.$digest();
+      // listenerFn always called during the first $digest loop after it was registered
+      expect(scope.counter).toBe(1);
+
+      scope.$digest();
+      //After first loop, only called when watchFn value changes
+      expect(scope.counter).toBe(1)
+
+      scope.someValue = 'new value';
+      expect(scope.counter).toBe(1);
+
+      scope.$digest();
+      expect(scope.counter).toBe(2);
+    })
   });
 });
 
