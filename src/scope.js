@@ -5,19 +5,17 @@ function Scope() {
   this.$$watchers = [];
 }
 
-
-Scope.prototype.$watch = function (watchFn, listenerFn = () => {}) {
+Scope.prototype.$watch = function(watchFn, listenerFn = () => {}) {
   const watcher = {
     watchFn,
     listenerFn,
-    last: initWatchVal,
+    last: initWatchVal
   };
-  
+
   this.$$watchers = [...this.$$watchers, watcher];
 };
 
 Scope.prototype.$digestOnce = function() {
-
   let dirty;
 
   this.$$watchers.forEach(watcher => {
@@ -26,11 +24,13 @@ Scope.prototype.$digestOnce = function() {
 
     if (newValue !== oldValue) {
       watcher.last = newValue;
-      
-      watcher.listenerFn(newValue, 
-        (oldValue === initWatchVal ? newValue : oldValue), 
-        this);
-      
+
+      watcher.listenerFn(
+        newValue,
+        oldValue === initWatchVal ? newValue : oldValue,
+        this
+      );
+
       dirty = true;
     }
   });
@@ -40,22 +40,9 @@ Scope.prototype.$digestOnce = function() {
 
 Scope.prototype.$digest = function() {
   let dirty;
-
   do {
-    dirty = this.$digestOnce;
-  } while (dirty)
-}
+    dirty = this.$digestOnce();
+  } while (dirty);
+};
 
 module.exports = Scope;
-
-//If anything on scope change, watch functions are fired
-//First watch will be scope.initial === undefined
-
-//Second one will  fire
-//this.nameUpper  = 'JANE'
-
-//this.nameUpper has changed which should fire the watcher again
-
-//First one this.initial = J.
-
-//second one 'Jane' === 'Jane' so nothing will happen;
