@@ -40,7 +40,7 @@ describe('Scope', () => {
       scope.counter = 0;
 
       const watchFn = (scope) => scope.someValue;
-      const listenerFn = (newValue, oldValue, scope) => { scope.counter++ }
+      const listenerFn = (newValue, oldValue, scope) => { scope.counter++ };
 
       scope.$watch(watchFn, listenerFn);
 
@@ -52,14 +52,14 @@ describe('Scope', () => {
 
       scope.$digest();
       //After first loop, only called when watchFn value changes
-      expect(scope.counter).toBe(1)
+      expect(scope.counter).toBe(1);
 
       scope.someValue = 'new value';
       expect(scope.counter).toBe(1);
 
       scope.$digest();
       expect(scope.counter).toBe(2);
-    })
+    });
 
     it('calls listener when watch value is first undefined', () => {
       scope.counter = 0;
@@ -70,7 +70,45 @@ describe('Scope', () => {
 
       scope.$digest();
       expect(scope.counter).toBe(1);
-    })
+    });
+
+    it('may have watchers tha omit the listener function', () => {
+      const watchFn = jasmine.createSpy().and.returnValue('something');
+      scope.$watch(watchFn); 
+      scope.$digest();
+
+      expect(watchFn).toHaveBeenCalled();
+    });
+
+    it('triggers chained watchers in the same digest', () => {
+      scope.name = 'Jane';
+
+      const watchFn = (scope) => scope.nameUpper;
+      const listenerFn = (newValue, oldValue, scope) => {
+        if (newValue) {
+          scope.initial = newValue.substring(0,1) + '.';
+        }
+      };
+
+      scope.$watch(watchFn, listenerFn);
+
+      const nextWatchFn = (scope) => scope.name;
+      const nextListenerFn = (newValue, oldValue, scope) => {
+        if (newValue) {
+          scope.nameUpper = newValue.toUpperCase();
+        }
+      };
+
+      scope.$watch(nextWatchFn, nextListenerFn);
+
+      scope.$digest();
+      expect(scope.inital).toBe('J.');
+
+      scope.name = 'Bob';
+      scope.$digest();
+      expect(scope.inital).toBe('B.');
+      
+    });
   });
 });
 

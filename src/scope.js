@@ -1,5 +1,4 @@
 //Function is referenced so watcher.last will iniitally always be unique
-
 function initWatchVal() {}
 
 function Scope() {
@@ -7,7 +6,7 @@ function Scope() {
 }
 
 
-Scope.prototype.$watch = function (watchFn, listenerFn) {
+Scope.prototype.$watch = function (watchFn, listenerFn = () => {}) {
   const watcher = {
     watchFn,
     listenerFn,
@@ -17,7 +16,10 @@ Scope.prototype.$watch = function (watchFn, listenerFn) {
   this.$$watchers = [...this.$$watchers, watcher];
 };
 
-Scope.prototype.$digest = function() {
+Scope.prototype.$digestOnce = function() {
+
+  let dirty;
+
   this.$$watchers.forEach(watcher => {
     const newValue = watcher.watchFn(this);
     let oldValue = watcher.last;
@@ -28,8 +30,32 @@ Scope.prototype.$digest = function() {
       watcher.listenerFn(newValue, 
         (oldValue === initWatchVal ? newValue : oldValue), 
         this);
+      
+      dirty = true;
     }
   });
+
+  return dirty;
 };
 
+Scope.prototype.$digest = function() {
+  let dirty;
+
+  do {
+    dirty = this.$digestOnce;
+  } while (dirty)
+}
+
 module.exports = Scope;
+
+//If anything on scope change, watch functions are fired
+//First watch will be scope.initial === undefined
+
+//Second one will  fire
+//this.nameUpper  = 'JANE'
+
+//this.nameUpper has changed which should fire the watcher again
+
+//First one this.initial = J.
+
+//second one 'Jane' === 'Jane' so nothing will happen;
