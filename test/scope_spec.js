@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const Scope = require("../src/scope");
 
 describe("Scope", () => {
@@ -112,5 +113,30 @@ describe("Scope", () => {
       scope.$digest();
       expect(scope.initial).toBe("B.");
     });
+
+    it("gives up on the watchers after 10 iterations", () => {
+      scope.counterA = 0;
+      scope.counterB = 0;
+
+      const watchFn = () => scope.counterA;
+      const listenerFn = (newValue, oldValue, scope) => {
+        scope.counterB++;
+      };
+
+      scope.$watch(watchFn, listenerFn);
+
+      const nextWatchFn = () => scope.counterB;
+      const nextListenerFn = (newValue, oldValue, scope) => {
+        scope.counterA++;
+      };
+
+      scope.$watch(nextWatchFn, nextListenerFn);
+
+      expect(() => {
+        scope.$digest();
+      }).toThrow();
+    });
+
+    it("end the digest when the last watch is clean", () => {});
   });
 });
