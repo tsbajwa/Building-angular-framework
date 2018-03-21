@@ -137,6 +137,27 @@ describe("Scope", () => {
       }).toThrow();
     });
 
-    it("end the digest when the last watch is clean", () => {});
+    fit("end the digest when the last watch is clean", () => {
+      scope.array = _.range(100);
+      let watchExecutions = 0;
+
+      _.times(100, i => {
+        let watchFn = scope => {
+          watchExecutions++;
+          return scope.array[i];
+        };
+
+        let listenerFn = (newValue, oldValue, scope) => {};
+
+        scope.$watch(watchFn, listenerFn);
+      });
+
+      scope.$digest();
+      expect(watchExecutions).toBe(200);
+
+      scope.array[0] = 420;
+      scope.$digest();
+      expect(watchExecutions).toBe(301);
+    });
   });
 });

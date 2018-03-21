@@ -1,8 +1,11 @@
+const _ = require("lodash");
+
 //Function is referenced so watcher.last will iniitally always be unique
 function initWatchVal() {}
 
 function Scope() {
   this.$$watchers = [];
+  this.$$lastDirtyWatch = null;
 }
 
 Scope.prototype.$watch = function(watchFn, listenerFn = () => {}) {
@@ -18,11 +21,12 @@ Scope.prototype.$watch = function(watchFn, listenerFn = () => {}) {
 Scope.prototype.$digestOnce = function() {
   let dirty;
 
-  this.$$watchers.forEach(watcher => {
+  _.forEach(this.$$watchers, watcher => {
     const newValue = watcher.watchFn(this);
     let oldValue = watcher.last;
 
     if (newValue !== oldValue) {
+      this.$$lastDirtyWatch = watcher;
       watcher.last = newValue;
 
       watcher.listenerFn(
@@ -32,6 +36,8 @@ Scope.prototype.$digestOnce = function() {
       );
 
       dirty = true;
+    } else if (watcher === this.$$lastDirtyWatch) {
+      return false;
     }
   });
 
@@ -41,6 +47,7 @@ Scope.prototype.$digestOnce = function() {
 Scope.prototype.$digest = function() {
   let timeToLive = (ttl = 10);
   let dirty;
+  this.$$lastDirtyWatch = null;
 
   do {
     dirty = this.$digestOnce();
