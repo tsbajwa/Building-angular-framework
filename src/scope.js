@@ -36,6 +36,7 @@ Scope.prototype.$digestOnce = function() {
       );
 
       dirty = true;
+      //Optimization: Short ciruits the digest (Note 1)
     } else if (watcher === this.$$lastDirtyWatch) {
       return false;
     }

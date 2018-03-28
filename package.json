@@ -21,9 +21,7 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.1",
     "karma-jshint-preprocessor": "0.0.6",
-    "karma-phantomjs-launcher": "^1.0.4",
-    "phantomjs-prebuilt": "^2.1.16",
-    "sinon": "^4.4.6",
+    "sinon": "^4.4.10",
     "watchify": "^3.11.0"
   },
   "dependencies": {
