@@ -161,24 +161,23 @@ describe("Scope", () => {
     });
 
     it("does not end digest so that new watches are not run", () => {
-      scope.aValue = 'abc';
+      scope.aValue = "abc";
       scope.counter = 0;
 
       const watchFn = () => scope.aValue;
       const listenerFn = (newValue, oldValue, scope) => {
-
-        const watchFn = (scope) => scope.aValue;
+        const watchFn = scope => scope.aValue;
         const listenerFn = (newValue, oldValue, scope) => {
           scope.counter++;
-        }
+        };
 
         scope.$watch(watchFn, listenerFn);
-      }
+      };
 
       scope.$watch(watchFn, listenerFn);
 
       scope.$digest();
       expect(scope.counter).toBe(1);
-    })
+    });
   });
 });

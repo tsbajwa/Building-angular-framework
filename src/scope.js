@@ -3,7 +3,7 @@ const _ = require("lodash");
 /**
  * Note 1:  If all digests are clean will short circuit the loop instead of continuing to check watcehrs that are clean. Returning false in lodash forEach short cicuits loop.
  * NOte 2: Prevents digest from prematurely ending (Note 1) in cases where new watches are added as part of the digest cycle.
- * 
+ *
  */
 function initWatchVal() {}
 
@@ -25,7 +25,7 @@ Scope.prototype.$watch = function(watchFn, listenerFn = () => {}) {
 };
 
 Scope.prototype.$digestOnce = function() {
-  let isWatchDirty;  //dirty
+  let isWatchDirty; //dirty
 
   _.forEach(this.$$watchers, watcher => {
     const newValue = watcher.watchFn(this);
@@ -52,9 +52,8 @@ Scope.prototype.$digestOnce = function() {
 };
 
 Scope.prototype.$digest = function() {
-  
   let timeToLive = 10; // ttl
-  let isWatchDirty;   // dirty
+  let isWatchDirty; // dirty
   this.$$lastDirtyWatch = null;
 
   do {
